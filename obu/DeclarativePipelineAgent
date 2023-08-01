@@ -1,0 +1,50 @@
+pipeline
+{
+    agent
+    {
+        label 'myslave'
+    }
+    stages
+    {
+        stage ('ContDownload')
+        {
+            steps
+            {
+                git 'https://github.com/intelliqittrainings/maven.git'
+            }
+        }
+        
+        stage ('ContBuild')
+        {
+            steps
+            {
+                sh 'mvn package'
+            }
+        }
+        
+        
+        stage ('ContDeployment')
+        {
+            steps
+            {
+                deploy adapters: [tomcat9(credentialsId: 'bc5feed4-00cb-4825-a4e0-14b327cd1a59', path: '', url: 'http://172.31.18.211:8080')], contextPath: 'mytestapp', war: '**/*.war'
+            }
+        }
+        
+        stage ('ContTesting')
+        {
+            steps
+            {
+                git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
+            }
+        }
+        
+        stage ('ContDelivery')
+        {
+            steps
+            {
+                deploy adapters: [tomcat9(credentialsId: 'bc5feed4-00cb-4825-a4e0-14b327cd1a59', path: '', url: 'http://172.31.27.31:8080')], contextPath: 'myprodapp', war: '**/*.war'
+            }
+        }
+    }
+}

@@ -1,0 +1,29 @@
+node ('myslave')
+ {
+	stage ('ContDownload')
+	{
+		git 'https://github.com/intelliqittrainings/maven.git'
+	}
+	
+	stage ('ContBuild')
+	{
+		sh 'mvn package'
+	}
+	
+	stage ('ContDeploy')
+	{
+	    sh 'scp /var/lib/jenkins/workspace/ScriptingPipelineAgent/webapp/target/webapp.war ubuntu@172.31.18.211:/var/lib/tomcat9/webapps/testapp.war'
+	}
+	
+	stage('ContTesting')
+	{
+		git 'https://github.com/intelliqittrainings/FunctionalTesting.git'
+		sh 'java -jar /var/lib/jenkins/workspace/ScriptingPipelineAgent/testing.jar'
+
+	}
+	stage ('ContDelivery')
+	{
+	    sh 'scp /var/lib/jenkins/workspace/ScriptingPipelineAgent/webapp/target/webapp.war ubuntu@172.31.27.31:/var/lib/tomcat9/webapps/prodapp.war'
+	}
+	
+ }
