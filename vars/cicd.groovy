@@ -1,8 +1,8 @@
-def gitdownload(repo)
+def gitDownload(repo)
 {
   git "https://github.com/intelliqittrainings/${repo}.git"
 }
-def gitbuild()
+def gitBuild()
 {
-  sh "mvn package"
+  sh 'mvn package'
 }
